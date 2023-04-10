@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_format.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MovieHorizontalListview extends StatefulWidget {
   final List<Movie> movies;
@@ -112,8 +113,16 @@ class _Slide extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     );
                   }
+
+                  //el gesture detector es para que cuando se toque la imagen se haga algo
+                  return GestureDetector(
+                    //el on tap es para que cuando se toque la imagen se haga algo
+                    onTap: ( ) => context.push('movie/${movie.id}'),
+                    //el child es la imagen que se retorna
+                    child: FadeIn(child: child),
+                  );
                   //retorrno el child que es la imagen
-                  return FadeIn(child: child);
+                  
                 },
               ),
             ),
