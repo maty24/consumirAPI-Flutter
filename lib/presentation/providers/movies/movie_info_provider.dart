@@ -29,8 +29,6 @@ class MovieMapNotifier extends StateNotifier<Map<String, Movie>> {
 
   Future<void> loadMovie(String movieId) async {
     if (state[movieId] != null) return;
-
-    print('realizando peticon http');
 //getmovie es una funcion que recibe un string y devuelve un future de movie
     final movie = await getMovie(movieId);
 

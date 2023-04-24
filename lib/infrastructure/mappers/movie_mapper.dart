@@ -5,6 +5,8 @@ import 'package:cinemapedia/infrastructure/models/moviedb/movies_details.dart';
 //va a tener una mission es leer modelos y crear la entidad
 //traformar a la entidad
 class MovieMapper {
+
+  //movie es la entidad, moviemoviedb es el modelo y tiene que devolver una entidad movie
   static Movie movieDBToEntity(MovieMovieDB moviedb) => Movie(
       adult: moviedb.adult,
       //si es diferente de vacio me devuelve la url de la imagen
