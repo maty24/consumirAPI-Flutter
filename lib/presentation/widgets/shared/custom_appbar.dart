@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomAppbar extends StatelessWidget {
+import '../../delegates/search_movie_delegate.dart';
+import '../../providers/movies/movies_repository_provider.dart';
+
+class CustomAppbar extends ConsumerWidget {
   const CustomAppbar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     //busco el color en el tema global
     final colors = Theme.of(context).colorScheme;
     //el titlemedium es un estilo que esta en el tema global
@@ -25,7 +29,20 @@ class CustomAppbar extends StatelessWidget {
               Text('Cinemapedia', style: titleStyle),
               //el spacer es para que el icono se ponga al final y el texto se ponga al principio, pega todo al final
               const Spacer(),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+              IconButton(
+                  onPressed: () {
+                    //estoy buscando el repositorio de peliculas y me retorna el repositorio
+                    final movieRespository = ref.read(movieRepositoryProvider);
+
+                    showSearch(
+                        //el context es el contexto de la aplicacion
+                        context: context,
+                        //el que se encarga de buscar
+                        delegate: SearchMovieDelegate(
+                            //estoy mandando la referencia de la funcion searchMovies
+                            movieRespository.searchMovies));
+                  },
+                  icon: const Icon(Icons.search))
             ]),
           )),
     );

@@ -5,7 +5,6 @@ import 'package:cinemapedia/infrastructure/models/moviedb/movies_details.dart';
 //va a tener una mission es leer modelos y crear la entidad
 //traformar a la entidad
 class MovieMapper {
-
   //movie es la entidad, moviemoviedb es el modelo y tiene que devolver una entidad movie
   static Movie movieDBToEntity(MovieMovieDB moviedb) => Movie(
       adult: moviedb.adult,
@@ -24,7 +23,9 @@ class MovieMapper {
       posterPath: (moviedb.posterPath != '')
           ? 'https://image.tmdb.org/t/p/w500${moviedb.posterPath}'
           : 'no-poster',
-      releaseDate: moviedb.releaseDate,
+      releaseDate:
+          //si es diferente de null me devuelve la fecha de lanzamiento de lo contrario me devuelve la fecha actual
+          moviedb.releaseDate != null ? moviedb.releaseDate! : DateTime.now(),
       title: moviedb.title,
       video: moviedb.video,
       voteAverage: moviedb.voteAverage,
