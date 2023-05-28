@@ -1,5 +1,7 @@
+import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../delegates/search_movie_delegate.dart';
 import '../../providers/movies/movies_repository_provider.dart';
@@ -34,13 +36,17 @@ class CustomAppbar extends ConsumerWidget {
                     //estoy buscando el repositorio de peliculas y me retorna el repositorio
                     final movieRespository = ref.read(movieRepositoryProvider);
 
-                    showSearch(
+                    showSearch<Movie?>(
                         //el context es el contexto de la aplicacion
                         context: context,
                         //el que se encarga de buscar
                         delegate: SearchMovieDelegate(
                             //estoy mandando la referencia de la funcion searchMovies
-                            movieRespository.searchMovies));
+                            movieRespository.searchMovies)
+                            ).then((movie){
+                              if(movie == null) return;
+                              context.push('/movie/${movie.id}');
+                            });
                   },
                   icon: const Icon(Icons.search))
             ]),

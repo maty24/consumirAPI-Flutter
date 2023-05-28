@@ -21,8 +21,8 @@ class MovieMapper {
       overview: moviedb.overview,
       popularity: moviedb.popularity,
       posterPath: (moviedb.posterPath != '')
-          ? 'https://image.tmdb.org/t/p/w500${moviedb.posterPath}'
-          : 'no-poster',
+        ? 'https://image.tmdb.org/t/p/w500${ moviedb.posterPath }'
+        : 'https://www.movienewz.com/img/films/poster-holder.jpg',
       releaseDate:
           //si es diferente de null me devuelve la fecha de lanzamiento de lo contrario me devuelve la fecha actual
           moviedb.releaseDate != null ? moviedb.releaseDate! : DateTime.now(),
