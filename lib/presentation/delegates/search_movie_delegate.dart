@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_format.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
@@ -8,8 +10,31 @@ typedef SearchMoviesCallback = Future<List<Movie>> Function(String query);
 
 class SearchMovieDelegate extends SearchDelegate<Movie?> {
   final SearchMoviesCallback searchMovies;
+  //para multiples listener
+  StreamController<List<Movie>> debounceMovies = StreamController.broadcast();
+  Timer? _debounceTimer;
 
-  SearchMovieDelegate(this.searchMovies);
+  SearchMovieDelegate({required this.searchMovies});
+
+  //para limpiar los streams
+  void clearStreams() {
+    debounceMovies.close();
+  }
+
+  //muy util el devounce
+  void _onQueryChanged(String query) {
+    //si timer tiene un valor y esta activo encontes lo limpio y no seguie mas, cuando deja de escribir y hace una peticion
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    _debounceTimer = Timer(const Duration(microseconds: 500), () async {
+      if (query.isEmpty) {
+        debounceMovies.add([]);
+        return;
+      }
+      final movies = await searchMovies(query);
+      //hace la peticion y lo que puse en la barra de busqueda
+      debounceMovies.add(movies);
+    });
+  }
 
 //para cambiar el texto de la barra de busqueda
   @override
@@ -35,7 +60,10 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
         //el precio de cerrar la busqueda es null porque no quiero que me devuelva nada
-        onPressed: () => close(context, null),
+        onPressed: () {
+          clearStreams();
+          close(context, null);
+        },
         icon: const Icon(Icons.arrow_back_ios_new_rounded));
   }
 
@@ -44,11 +72,15 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
     return const Text('Build Results');
   }
 
+//esto es para hacer las peticiones de las busquedas
   @override
   Widget buildSuggestions(BuildContext context) {
-    return FutureBuilder(
+    //cada vez que toclo una tecla de ejecuta esta funcion
+    _onQueryChanged(query);
+    return StreamBuilder(
       //el future es la funcion que recibe un string y devuelve un future de lista de peliculas, el query es el texto que se esta escribiendo en la barra de busqueda
-      future: searchMovies(query),
+      //future: searchMovies(query),
+      stream: debounceMovies.stream,
       initialData: const [],
       builder: (context, snapshot) {
         //el snapshot es el resultado de la busqueda
@@ -59,7 +91,10 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
           itemBuilder: (context, index) => _MovieItem(
               movie: movies[index],
               //le mando la funcion close que esta global en el delagate
-              onMovieSelected: close),
+              onMovieSelected: (context, movie) {
+                clearStreams();
+                close(context, movie);
+              }),
         );
       },
     );
