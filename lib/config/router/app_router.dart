@@ -1,11 +1,15 @@
 import 'package:go_router/go_router.dart';
 import 'package:cinemapedia/presentation/screens/screens.dart';
 
-final appRouter = GoRouter(initialLocation: '/', routes: [
+final appRouter = GoRouter(initialLocation: '/home/0', routes: [
   GoRoute(
-      path: '/',
+      path: '/home/:page',
       name: HomeScreen.name,
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) {
+        final pageIndex = state.params['page'] ?? '0';
+        //estoy pasando de string a int
+        return HomeScreen(pageIndex: int.parse(pageIndex));
+      },
       //esto es para las rutas hijas
       routes: [
 //ruta hija que no es necesario poner el / al principio
@@ -21,4 +25,5 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
           },
         ),
       ]),
+  GoRoute(path: '/', redirect: (_, __) => '/home/0')
 ]);

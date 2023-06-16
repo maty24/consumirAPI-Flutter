@@ -117,7 +117,7 @@ class _Slide extends StatelessWidget {
                   //el gesture detector es para que cuando se toque la imagen se haga algo
                   return GestureDetector(
                     //el on tap es para que cuando se toque la imagen se haga algo
-                    onTap: ( ) => context.push('/movie/${movie.id}'),
+                    onTap: ( ) => context.push('/home/0/movie/${movie.id}'),
                     //el child es la imagen que se retorna
                     child: FadeIn(child: child),
                   );
